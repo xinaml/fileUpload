@@ -1,7 +1,21 @@
 package com.xinaml.fileupload.common;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+
+@Component
 public class PathCommon {
     public static final String SEPARATOR = "/";
-    public static final String ROOT_PATH = "/storage";
+    @Value("${storage_path}")
+    private String storage_path;
+    public static String ROOT_PATH = "";
+
+    @PostConstruct
+    public void init() {
+        ROOT_PATH = storage_path;
+        System.out.println(ROOT_PATH);
+    }
 
 }
