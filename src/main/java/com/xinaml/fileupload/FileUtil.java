@@ -1,29 +1,21 @@
-package com.changbei.modules.storage;
+package com.xinaml.fileupload;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import com.xinaml.fileupload.exception.ServiceException;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.tools.zip.ZipEntry;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-
-import com.changbei.common.service.ServiceException;
 
 public class FileUtil {
 
@@ -37,7 +29,7 @@ public class FileUtil {
     public static String getFileType(File file) {
         if (file.isFile()) {
             try {
-                String suffix =StringUtils.substringAfterLast(file.getName(), ".");
+                String suffix = StringUtils.substringAfterLast(file.getName(), ".");
                 suffix = suffix.toLowerCase();
                 return suffix;
             } catch (Exception e) {
@@ -47,7 +39,7 @@ public class FileUtil {
             return "FOLDER";
         }
     }
- 
+
     /**
      * 获取文件大小
      *
@@ -73,7 +65,7 @@ public class FileUtil {
             return size + "B";
         }
     }
-    
+
     /**
      * 保留两位小数
      *
@@ -82,31 +74,31 @@ public class FileUtil {
     private static double getBySeconds(double val) {
         return new BigDecimal(val).setScale(1, RoundingMode.UP).doubleValue();
     }
-    
+
     /**
      * 文件转字节
      *
      * @param filePath 文件路径
      * @return
-     * @throws SerException
+     * @throws ServiceException
      */
     public static byte[] FileToByte(String filePath) throws ServiceException {
         byte[] buffer = null;
         try {
             File file = new File(filePath);
             if (file.exists()) {
-            	if(!file.isDirectory()){
-            		 FileInputStream fis = new FileInputStream(file);
-                     ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                     byte[] b = new byte[1024];
-                     int n;
-                     while ((n = fis.read(b)) != -1) {
-                         bos.write(b, 0, n);
-                     }
-                     fis.close();
-                     bos.close();
-                     buffer = bos.toByteArray();
-            	}
+                if (!file.isDirectory()) {
+                    FileInputStream fis = new FileInputStream(file);
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    byte[] b = new byte[1024];
+                    int n;
+                    while ((n = fis.read(b)) != -1) {
+                        bos.write(b, 0, n);
+                    }
+                    fis.close();
+                    bos.close();
+                    buffer = bos.toByteArray();
+                }
             } else {
                 throw new ServiceException("文件不存在！");
             }
@@ -118,13 +110,13 @@ public class FileUtil {
         }
         return buffer;
     }
-    
+
     /**
      * 通过request获取上传文件
      *
      * @param request
      * @return
-     * @throws SerException
+     * @throws ServiceException
      */
     public static List<MultipartFile> getMultipartFile(HttpServletRequest request) throws ServiceException {
 
@@ -134,32 +126,32 @@ public class FileUtil {
         MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request; // 转换成多部分request
         Map<String, MultipartFile> map = multiRequest.getFileMap();
         List<MultipartFile> files = new ArrayList<MultipartFile>(map.size());
-        for(Entry<String, MultipartFile> entry:map.entrySet()){
-        	files.add(entry.getValue());
+        for (Entry<String, MultipartFile> entry : map.entrySet()) {
+            files.add(entry.getValue());
         }
         return files;
 
     }
-    
-	public static void saveStreamToFile(InputStream inputStream, String filePath)
-			throws Exception {
-		/* 创建输出流，写入数据，合并分块 */
-		OutputStream outputStream = new FileOutputStream(filePath);
-		byte[] buffer = new byte[1024];
-		int len = 0;
-		try {
-			while ((len = inputStream.read(buffer)) != -1) {
-				outputStream.write(buffer, 0, len);
-				outputStream.flush();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw e;
-		} finally {
-			outputStream.close();
-			inputStream.close();
-		}
-	}
+
+    public static void saveStreamToFile(InputStream inputStream, String filePath)
+            throws Exception {
+        /* 创建输出流，写入数据，合并分块 */
+        OutputStream outputStream = new FileOutputStream(filePath);
+        byte[] buffer = new byte[1024];
+        int len = 0;
+        try {
+            while ((len = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, len);
+                outputStream.flush();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            outputStream.close();
+            inputStream.close();
+        }
+    }
 
     /**
      * 上传是否合理
@@ -179,91 +171,94 @@ public class FileUtil {
             return false;
         }
     }
+
     /**
-	 * 压缩成ZIP 
-	 * @param srcDir 压缩文件夹路径 
-	 * @param out    压缩文件输出流
-	 * @param KeepDirStructure  是否保留原来的目录结构,true:保留目录结构; 
-	 * 							false:所有文件跑到压缩包根目录下(注意：不保留目录结构可能会出现同名文件,会压缩失败)
-	 * @throws RuntimeException 压缩失败会抛出运行时异常
-	 */
-	public static File toZip(String srcDir,FileOutputStream out, boolean KeepDirStructure)
-			throws RuntimeException{
-		ZipOutputStream zos = null ;
+     * 压缩成ZIP
+     *
+     * @param srcDir           压缩文件夹路径
+     * @param out              压缩文件输出流
+     * @param KeepDirStructure 是否保留原来的目录结构,true:保留目录结构;
+     *                         false:所有文件跑到压缩包根目录下(注意：不保留目录结构可能会出现同名文件,会压缩失败)
+     * @throws RuntimeException 压缩失败会抛出运行时异常
+     */
+    public static File toZip(String srcDir, FileOutputStream out, boolean KeepDirStructure)
+            throws RuntimeException {
+        ZipOutputStream zos = null;
 
-		try {
-			zos = new ZipOutputStream(out);
-			File sourceFile = new File(srcDir);
-			compress(sourceFile,zos,sourceFile.getName(),KeepDirStructure);
-			return sourceFile;
-		} catch (Exception e) {
-			throw new RuntimeException("zip error from ZipUtils",e);
-		}finally{
-			if(zos != null){
-				try {
-					zos.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		
-		
-	}
+        try {
+            zos = new ZipOutputStream(out);
+            File sourceFile = new File(srcDir);
+            compress(sourceFile, zos, sourceFile.getName(), KeepDirStructure);
+            return sourceFile;
+        } catch (Exception e) {
+            throw new RuntimeException("zip error from ZipUtils", e);
+        } finally {
+            if (zos != null) {
+                try {
+                    zos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
-	
-	
-	/**
-	 * 递归压缩方法
-	 * @param sourceFile 源文件
-	 * @param zos		 zip输出流
-	 * @param name		 压缩后的名称
-	 * @param KeepDirStructure  是否保留原来的目录结构,true:保留目录结构; 
-	 * 							false:所有文件跑到压缩包根目录下(注意：不保留目录结构可能会出现同名文件,会压缩失败)
-	 * @throws Exception
-	 */
-	private static final int  BUFFER_SIZE = 2 * 1024;
-	private static void compress(File sourceFile, ZipOutputStream zos, String name,
-			boolean KeepDirStructure) throws Exception{
-		byte[] buf = new byte[BUFFER_SIZE];
-		if(sourceFile.isFile()){
-			// 向zip输出流中添加一个zip实体，构造器中name为zip实体的文件的名字
-			zos.putNextEntry(new ZipEntry(name));
-			// copy文件到zip输出流中
-			int len;
-			FileInputStream in = new FileInputStream(sourceFile);
-			while ((len = in.read(buf)) != -1){
-				zos.write(buf, 0, len);
-			}
-			// Complete the entry
-			zos.closeEntry();
-			in.close();
-		} else {
-			File[] listFiles = sourceFile.listFiles();
-			if(listFiles == null || listFiles.length == 0){
-				// 需要保留原来的文件结构时,需要对空文件夹进行处理
-				if(KeepDirStructure){
-					// 空文件夹的处理
-					zos.putNextEntry(new ZipEntry(name + "/"));
-					// 没有文件，不需要文件的copy
-					zos.closeEntry();
-				}
-				
-			}else {
-				for (File file : listFiles) {
-					// 判断是否需要保留原来的文件结构
-					if (KeepDirStructure) {
-						// 注意：file.getName()前面需要带上父文件夹的名字加一斜杠,
-						// 不然最后压缩包中就不能保留原来的文件结构,即：所有文件都跑到压缩包根目录下了
-						compress(file, zos, name + "/" + file.getName(),KeepDirStructure);
-					} else {
-						compress(file, zos, file.getName(),KeepDirStructure);
-					}
-					
-				}
-			}
-		}
-	}
+
+    }
+
+
+    /**
+     * 递归压缩方法
+     *
+     * @param sourceFile 源文件
+     * @param zos         zip输出流
+     * @param name         压缩后的名称
+     * @param KeepDirStructure  是否保留原来的目录结构,true:保留目录结构;
+     * false:所有文件跑到压缩包根目录下(注意：不保留目录结构可能会出现同名文件,会压缩失败)
+     * @throws Exception
+     */
+    private static final int BUFFER_SIZE = 2 * 1024;
+
+    private static void compress(File sourceFile, ZipOutputStream zos, String name,
+                                 boolean KeepDirStructure) throws Exception {
+        byte[] buf = new byte[BUFFER_SIZE];
+        if (sourceFile.isFile()) {
+            // 向zip输出流中添加一个zip实体，构造器中name为zip实体的文件的名字
+            zos.putNextEntry(new ZipEntry(name));
+            // copy文件到zip输出流中
+            int len;
+            FileInputStream in = new FileInputStream(sourceFile);
+            while ((len = in.read(buf)) != -1) {
+                zos.write(buf, 0, len);
+            }
+            // Complete the entry
+            zos.closeEntry();
+            in.close();
+        } else {
+            File[] listFiles = sourceFile.listFiles();
+            if (listFiles == null || listFiles.length == 0) {
+                // 需要保留原来的文件结构时,需要对空文件夹进行处理
+                if (KeepDirStructure) {
+                    // 空文件夹的处理
+                    zos.putNextEntry(new ZipEntry(name + "/"));
+                    // 没有文件，不需要文件的copy
+                    zos.closeEntry();
+                }
+
+            } else {
+                for (File file : listFiles) {
+                    // 判断是否需要保留原来的文件结构
+                    if (KeepDirStructure) {
+                        // 注意：file.getName()前面需要带上父文件夹的名字加一斜杠,
+                        // 不然最后压缩包中就不能保留原来的文件结构,即：所有文件都跑到压缩包根目录下了
+                        compress(file, zos, name + "/" + file.getName(), KeepDirStructure);
+                    } else {
+                        compress(file, zos, file.getName(), KeepDirStructure);
+                    }
+
+                }
+            }
+        }
+    }
 
 
 }

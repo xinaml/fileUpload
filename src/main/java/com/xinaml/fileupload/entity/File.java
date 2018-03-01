@@ -1,39 +1,23 @@
-package com.changbei.modules.storage.entity;
+package com.xinaml.fileupload.entity;
 
 import java.util.Date;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+public class File {
 
-import com.changbei.common.persistence.BaseEntity;
-import com.changbei.modules.storage.type.FileType;
+    private Long id;
+    /**
+     * 关联id ,通过该id可找到对应文件
+     */
+    private Long relevanceId;
 
-@Entity
-@Table(name = "tb_storage_file")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class File extends BaseEntity{
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	/**
-	 *关联id ,通过该id可找到对应文件
-	 */
-	private Long relevanceId;
-	
 
     /**
      * 所属用户
      */
     private Long userId;
-	
-	/**
+
+    /**
      * 文件名
      */
     private String name;
@@ -63,28 +47,28 @@ public class File extends BaseEntity{
 
 
     public Boolean getDown() {
-		return down;
-	}
+        return down;
+    }
 
-	public void setDown(Boolean down) {
-		this.down = down;
-	}
+    public void setDown(Boolean down) {
+        this.down = down;
+    }
 
-	/**
+    /**
      * 创建时间
      */
-	private Date createDate;
+    private Date createDate;
 
 
     public Date getCreateDate() {
-		return createDate;
-	}
+        return createDate;
+    }
 
-	public void setCreateDate(Date createDate) {
-		this.createDate = createDate;
-	}
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
 
-	public String getName() {
+    public String getName() {
         return name;
     }
 
@@ -116,36 +100,36 @@ public class File extends BaseEntity{
         this.size = size;
     }
 
-	public Long getUserId() {
-		return userId;
-	}
+    public Long getUserId() {
+        return userId;
+    }
 
-	public void setUserId(Long userId) {
-		this.userId = userId;
-	}
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public Long getRelevanceId() {
-		return relevanceId;
-	}
+    public Long getRelevanceId() {
+        return relevanceId;
+    }
 
-	public void setRelevanceId(Long relevanceId) {
-		this.relevanceId = relevanceId;
-	}
+    public void setRelevanceId(Long relevanceId) {
+        this.relevanceId = relevanceId;
+    }
 
-	public String getMd5() {
-		return md5;
-	}
+    public String getMd5() {
+        return md5;
+    }
 
-	public void setMd5(String md5) {
-		this.md5 = md5;
-	}
+    public void setMd5(String md5) {
+        this.md5 = md5;
+    }
 
 }
