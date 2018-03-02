@@ -1,6 +1,8 @@
-package com.changbei.modules.storage.vo;
+package com.xinaml.fileupload.vo;
 
-
+/**
+ * @author lgq
+ */
 public class FileVO {
 
     /**

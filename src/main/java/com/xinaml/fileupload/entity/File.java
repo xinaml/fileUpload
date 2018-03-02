@@ -2,7 +2,9 @@ package com.xinaml.fileupload.entity;
 
 import java.util.Date;
 
-
+/**
+ * @author lgq
+ */
 public class File {
 
     private Long id;

@@ -5,6 +5,9 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
+/**
+ * @author lgq
+ */
 @Component
 public class PathCommon {
     public static final String SEPARATOR = "/";
@@ -15,7 +18,7 @@ public class PathCommon {
     @PostConstruct
     public void init() {
         ROOT_PATH = storage_path;
-        System.out.println(ROOT_PATH);
+        System.out.println("root path="+ROOT_PATH);
     }
 
 }

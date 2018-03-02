@@ -9,6 +9,9 @@ import org.springframework.context.annotation.PropertySource;
 
 import javax.servlet.MultipartConfigElement;
 
+/**
+ * @author lgq
+ */
 @EnableAutoConfiguration
 @PropertySource({"classpath:config.properties"})
 @SpringBootApplication

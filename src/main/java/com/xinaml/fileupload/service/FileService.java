@@ -1,10 +1,10 @@
 package com.xinaml.fileupload.service;
 
-import com.changbei.modules.storage.vo.FileVO;
 import com.xinaml.fileupload.FileUtil;
 import com.xinaml.fileupload.common.PathCommon;
 import com.xinaml.fileupload.entity.FileInfo;
 import com.xinaml.fileupload.exception.ServiceException;
+import com.xinaml.fileupload.vo.FileVO;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -15,10 +15,14 @@ import java.io.*;
 import java.util.*;
 import java.util.Map.Entry;
 
-
+/**
+ * @author lgq
+ */
 @Service
 public class FileService {
-
+    /**
+     * 图片预览图片类型
+     */
     private static final String[] IMAGE_SUFFIX = new String[]{"jpg", "png",
             "jpeg", "bmp", "gif"};
     private static Map<String, Integer> uploadInfoList = new HashMap<String, Integer>();
