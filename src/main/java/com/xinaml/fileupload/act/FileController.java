@@ -313,11 +313,9 @@ public class FileController {
     private void initFileInfo(FileInfo info) {
 
         int ext_index = info.getName().lastIndexOf(".");
-        String ext = null;
+        String ext = "";
         if (ext_index != -1) {
-            info.getName().substring(ext_index);//后缀
-        } else {
-            ext = null == ext ? "" : ext;
+            ext = info.getName().substring(ext_index);//后缀
         }
         info.setExt(ext);
         if (null != info.getChunk()) {
